@@ -9,7 +9,8 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"),
-            SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DB_URI")
+            SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DB_URI"),
+            SQLALCHEMY_TRACK_MODIFICATIONS=False # sql alchemy의 이벤트를 처리하는 옵션, 추가적인 메모리를 필요로 하여 꺼두는 것을 추천
         )
     else:
         app.config.from_mapping(test_config)
