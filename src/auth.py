@@ -62,7 +62,9 @@ def login():
         is_pass_correct = check_password_hash(user.password, password)
 
         if is_pass_correct:
+            # refresh token's default expirt=30days
             refresh = create_refresh_token(identity=user.id)
+            # access token's default expire=15minutes
             access = create_access_token(identity=user.id)
 
             return jsonify({
@@ -88,3 +90,14 @@ def me():
         'username': user.username,
         'email': user.email
     }), HTTP_200_OK
+
+
+@auth.post("/token/refresh")
+@jwt_required(refresh=True)
+def refresh_users_token():
+    identity = get_jwt_identity()
+    access = create_access_token(identity=identity)
+
+    return jsonify({
+        'access': access
+    })
