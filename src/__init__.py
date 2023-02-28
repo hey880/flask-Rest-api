@@ -1,7 +1,8 @@
-from flask import Flask, config
+from flask import Flask, config, jsonify
 import os
 from src.auth import auth
 from src.bookmarks import bookmarks
+from src.constants.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from src.database import db
 from flask_jwt_extended import JWTManager
 
@@ -36,5 +37,13 @@ def create_app(test_config=None):
     @app.get("/hello")
     def say_hello():
         return {"message": "Hello world"}
+
+    @app.errorhandler(HTTP_404_NOT_FOUND)  # 404 페이지로 이동할 경우 에러처리
+    def handle_404(e):
+        return jsonify({'error': 'Not found'}), HTTP_404_NOT_FOUND
+
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def handle_500(e):
+        return jsonify({'error': 'Something went wrong, we are working on it'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
