@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from src.constants.http_status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
+from src.constants.http_status_codes import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
 import validators
 from flask_jwt_extended import get_jwt_identity
 from src.database import Bookmark, db
@@ -86,7 +86,7 @@ def get_bookmark(id):
 @bookmarks.put('/<int:id>')
 @bookmarks.patch('/<int:id>')
 @jwt_required()
-def editbookmark(id):
+def edit_bookmark(id):
     current_user = get_jwt_identity()
 
     bookmark = Bookmark.query.filter_by(user_id=current_user, id=id).first()
@@ -116,3 +116,19 @@ def editbookmark(id):
         'created_at': bookmark.created_at,
         'updated_at': bookmark.updated_at,
     }), HTTP_200_OK
+
+
+@bookmarks.delete('/<int:id>')
+@jwt_required()
+def delete_bookmark(id):
+    current_user = get_jwt_identity()
+
+    bookmark = Bookmark.query.filter_by(user_id=current_user, id=id).first()
+
+    if not bookmark:
+        return jsonify({'message': 'Item not found'}), HTTP_404_NOT_FOUND
+
+    db.session.delete(bookmark)
+    db.session.commit()
+
+    return jsonify({}), HTTP_204_NO_CONTENT
