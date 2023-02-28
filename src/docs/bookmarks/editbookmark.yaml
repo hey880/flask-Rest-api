@@ -1,0 +1,35 @@
+Edit Bookmark
+---
+tags:
+  - Bookmarks
+parameters:
+  - name: id
+    description: bookmark id
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+  - name: body
+    description: The body should contain url, body.
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "url"
+        - "body"
+      properties:
+        url:
+          type: "string"
+          example: "http://google.com"
+        body:
+          type: "string"
+          example: "my google site"
+responses:
+  200:
+    description: When a user successfully update bookmark
+
+  400:
+    description: Fails to update bookmark due to bad request data

@@ -5,6 +5,8 @@ from src.bookmarks import bookmarks
 from src.constants.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from src.database import db
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger, swag_from
+from src.config.swagger import template, swagger_config
 
 
 def create_app(test_config=None):
@@ -15,7 +17,12 @@ def create_app(test_config=None):
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             # sql alchemy의 이벤트를 처리하는 옵션, 추가적인 메모리를 필요로 하여 꺼두는 것을 추천
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
-            JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY")
+            JWT_SECRET_KEY=os.environ.get("JWT_SECRET_KEY"),
+
+            SWAGGER={
+                'title': "Bookmarks API",
+                'uiversion': 3
+            }
         )
     else:
         app.config.from_mapping(test_config)
@@ -25,6 +32,8 @@ def create_app(test_config=None):
 
     # JWT
     JWTManager(app)
+
+    Swagger(app, config=swagger_config, template=template)
 
     # blueprint 등록
     app.register_blueprint(auth)

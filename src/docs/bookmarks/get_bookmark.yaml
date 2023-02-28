@@ -1,0 +1,19 @@
+Get Bookmark
+---
+tags:
+  - Bookmarks
+parameters:
+  - name: id
+    description: bookmark id
+    in: path
+    required: true
+    schema:
+      type: integer
+      required:
+        - "id"
+responses:
+  200:
+    description: When a user successfully get a bookmark
+
+  400:
+    description: Fails to get a bookmark due to bad request data

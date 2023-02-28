@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import validators
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from src.constants.http_status_codes import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT
+from flasgger import Swagger, swag_from
 
 from src.database import User, db
 
@@ -11,6 +12,7 @@ auth = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 
 @auth.post('/register')
+@swag_from("./docs/auth/register.yaml")
 def register():
     username = request.json['username']
     email = request.json['email']
@@ -51,6 +53,7 @@ def register():
 
 
 @auth.post('/login')
+@swag_from("./docs/auth/login.yaml")
 def login():
     # post로 받은 json데이터를 읽음, arg1=key, arg2=defaultvalue
     email = request.json.get('email', '')
