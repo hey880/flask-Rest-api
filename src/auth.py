@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from src.constants.http_status_codes import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from werkzeug.security import check_password_hash, generate_password_hash
 import validators
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from src.constants.http_status_codes import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT
 
 from src.database import User, db
@@ -52,7 +52,8 @@ def register():
 
 @auth.post('/login')
 def login():
-    email = request.json.get('email', '')  # post로 받은 json데이터를 읽음, arg1=key, arg2=defaultvalue
+    # post로 받은 json데이터를 읽음, arg1=key, arg2=defaultvalue
+    email = request.json.get('email', '')
     password = request.json.get('password', '')
 
     user = User.query.filter_by(email=email).first()
@@ -77,5 +78,13 @@ def login():
 
 
 @auth.get("/me")
+@jwt_required()
 def me():
-    return {"user": "me"}
+    user_id = get_jwt_identity()
+
+    user = User.query.filter_by(id=user_id).first()
+
+    return jsonify({
+        'username': user.username,
+        'email': user.email
+    }), HTTP_200_OK
